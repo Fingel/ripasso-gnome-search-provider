@@ -1,0 +1,7 @@
+[Unit]
+Description=Pass Gnome Shell search provider for GNOME
+
+[Service]
+Type=dbus
+BusName=io.m51.Pass.SearchProvider
+ExecStart=/usr/lib/ripasso-search-provider/ripasso-gnome-search-provider
