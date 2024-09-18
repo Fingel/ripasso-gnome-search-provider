@@ -7,6 +7,8 @@ This is a GNOME search provider for use with
 
 It is written 100% in rust using the [ripasso](https://github.com/cortex/ripasso) library and has no runtime dependencies, not even pass itself.
 
+Passwords will be cleared from the clipboard in 40 seconds. OTP is supported, prefix your search with `otp ` and then select a search result as normal.
+
 ## Installation
 
 ### Manual
