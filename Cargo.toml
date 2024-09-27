@@ -9,6 +9,7 @@ arboard = { version = "3.4.1", default-features = false }
 ripasso = "0.7.0"
 search-provider = { version = "0.10.0", default-features = false, features = ["tokio"] }
 tokio = { version = "1.40.0", features = ["macros"] }
+totp-rs = { version = "5.6.0", features = ["otpauth"] }
 zbus = { version = "4.4.0", features = ["tokio"] }
 zeroize = "1.8.1"
 
