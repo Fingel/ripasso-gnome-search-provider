@@ -73,7 +73,7 @@ impl SearchProviderImpl for Application {
                 };
                 copy_to_clipbard(&otp);
                 otp.zeroize();
-                send_notification(identifier, "OTP copied to clipboard".to_string());
+                send_notification(identifier, "OTP copied to clipboard.".to_string());
             } else {
                 let mut secret = match password.password(&self.password_store) {
                     Ok(secret) => secret,
