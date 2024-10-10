@@ -1,8 +1,7 @@
 use arboard::Clipboard;
 use ripasso::pass::PasswordStore;
 use search_provider::{ResultID, ResultMeta, SearchProvider, SearchProviderImpl};
-use std::{collections::HashMap, error::Error, path::PathBuf, thread, time};
-use totp_rs::TOTP;
+use std::{collections::HashMap, path::PathBuf, thread, time};
 use zbus::{blocking::Connection, proxy, zvariant::Value};
 use zeroize::Zeroize;
 
@@ -53,77 +52,42 @@ fn send_notification(summary: String, body: String) {
     .unwrap();
 }
 
-/// decrypts and returns a TOTP code if the entry contains a otpauth:// url
-/// # Errors
-/// Returns an `Err` if the code generation fails
-/// TODO: Remove this when/if https://github.com/cortex/ripasso/pull/358/
-/// is merged.
-pub fn mfa(secret: &String) -> Result<String, Box<dyn Error>> {
-    if let Some(start_pos) = secret.find("otpauth://") {
-        let end_pos = {
-            let mut end_pos = secret.len();
-            for (pos, c) in secret.chars().skip(start_pos).enumerate() {
-                if c.is_whitespace() {
-                    end_pos = pos + start_pos;
-                    break;
-                }
-            }
-            end_pos
-        };
-        // Use unchecked for sites like Discord, Github that still use 80
-        // bit secrets. https://github.com/constantoine/totp-rs/issues/46
-        let totp = TOTP::from_url_unchecked(&secret[start_pos..end_pos])?;
-        Ok(totp.generate_current()?)
-    } else {
-        Err("No OTP URL found".into())
-    }
-}
-
 struct Application {
     password_store: PasswordStore,
 }
 
 impl SearchProviderImpl for Application {
     fn activate_result(&self, identifier: ResultID, terms: &[String], _timestamp: u32) {
-        let entries = self.password_store.all_passwords().unwrap_or_default();
-        if let Some(entry) = entries
+        let passwords = self.password_store.all_passwords().unwrap_or_default();
+        if let Some(password) = passwords
             .iter()
             .find(|entry| entry.name == identifier.to_owned())
         {
             if terms[0] == "otp" {
-                match entry.secret(&self.password_store) {
-                    Ok(mut secret) => {
-                        match mfa(&secret) {
-                            Ok(mut otp) => {
-                                copy_to_clipbard(&otp);
-                                otp.zeroize();
-                                send_notification(
-                                    identifier,
-                                    "OTP copied to clipboard".to_string(),
-                                );
-                            }
-                            Err(err) => {
-                                send_notification("OTP Error".to_string(), err.to_string());
-                            }
-                        };
-                        secret.zeroize();
-                    }
+                let mut otp = match password.mfa(&self.password_store) {
+                    Ok(otp) => otp,
                     Err(err) => {
-                        send_notification("Could not read entry".to_string(), err.to_string())
+                        send_notification("OTP Error".to_string(), err.to_string());
+                        return;
                     }
                 };
+                copy_to_clipbard(&otp);
+                otp.zeroize();
+                send_notification(identifier, "OTP copied to clipboard".to_string());
             } else {
-                match entry.password(&self.password_store) {
-                    Ok(mut password) => {
-                        copy_to_clipbard(&password);
-                        password.zeroize();
-                        send_notification(identifier, "Password copied to clipboard".to_string())
+                let mut secret = match password.password(&self.password_store) {
+                    Ok(secret) => secret,
+                    Err(err) => {
+                        send_notification("Password Error".to_string(), err.to_string());
+                        return;
                     }
-                    Err(err) => send_notification("Password Error".to_string(), err.to_string()),
                 };
+                copy_to_clipbard(&secret);
+                secret.zeroize();
+                send_notification(identifier, "Password copied to clipboard".to_string());
             }
         } else {
-            send_notification("Error".to_string(), "Could Not Find Password".to_string())
+            send_notification("Error".to_string(), "Could Not Find Password".to_string());
         }
     }
 
