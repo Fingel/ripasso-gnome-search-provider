@@ -1,4 +1,4 @@
 [D-BUS Service]
 Name=io.m51.Pass.SearchProvider
-Exec=/usr/lib/ripasso-search-provider/ripasso-gnome-search-provider
+Exec=/usr/lib/ripasso-gnome-search-provider/ripasso-gnome-search-provider
 SystemdService=io.m51.Pass.SearchProvider.service
