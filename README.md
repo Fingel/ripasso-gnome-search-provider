@@ -10,6 +10,10 @@ It is written 100% in rust using the [ripasso](https://github.com/cortex/ripasso
 Passwords will be cleared from the clipboard in 40 seconds. OTP is supported, prefix your search with `otp ` and then select a search result as normal.
 
 ## Installation
+### Arch Linux
+Available on the aur as [ripasso-gnome-search-provider](https://aur.archlinux.org/packages/ripasso-gnome-search-provider)
+
+You will need to re-log your GNOME session after intsalling the package.
 
 ### Manual
 Clone this repository and run:
