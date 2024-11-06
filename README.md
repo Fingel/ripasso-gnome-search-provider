@@ -13,7 +13,7 @@ Passwords will be cleared from the clipboard in 40 seconds. OTP is supported, pr
 ### Arch Linux
 Available on the aur as [ripasso-gnome-search-provider](https://aur.archlinux.org/packages/ripasso-gnome-search-provider)
 
-You will need to re-log your GNOME session after intsalling the package.
+You will need to re-log your GNOME session after installing the package.
 
 ### Manual
 Clone this repository and run:
