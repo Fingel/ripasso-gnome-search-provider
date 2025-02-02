@@ -145,6 +145,7 @@ async fn main() -> zbus::Result<()> {
         "io.m51.Pass.SearchProvider",
         "/io/m51/Pass/SearchProvider",
     )
-    .await?;
+    .await
+    .expect("Could not create a Search Provider, check GNOME logs.");
     Ok(())
 }
