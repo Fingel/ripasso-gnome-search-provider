@@ -5,10 +5,9 @@ edition = "2021"
 authors = ["Austin Riba <austin@m51.io>"]
 
 [dependencies]
-arboard = { version = "3.4.1", default-features = false }
-ripasso = { git = "https://github.com/cortex/ripasso.git" }
-search-provider = { version = "0.10.0", default-features = false, features = ["tokio"] }
-tokio = { version = "1.43.0", features = ["macros"] }
-zbus = { version = "5.3.1", features = ["tokio"] }
+arboard = { version = "3.5.0", default-features = false }
+ripasso = { version = "0.8.0"}
+search-provider = { version = "0.11.0", default-features = false, features = ["tokio"] }
+tokio = { version = "1.45.1", features = ["macros"] }
+zbus = { version = "5.7.1", features = ["tokio"] }
 zeroize = "1.8.1"
-
